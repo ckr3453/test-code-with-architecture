@@ -6,28 +6,31 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class UserResponse {
+public class MyProfileResponse {
 
     private final Long id;
     private final String email;
     private final String nickname;
+    private final String address;
     private final UserStatus status;
     private final Long lastLoginAt;
 
     @Builder
-    public UserResponse(Long id, String email, String nickname, UserStatus status, Long lastLoginAt) {
+    public MyProfileResponse(Long id, String email, String nickname, String address, UserStatus status, Long lastLoginAt) {
         this.id = id;
         this.email = email;
         this.nickname = nickname;
+        this.address = address;
         this.status = status;
         this.lastLoginAt = lastLoginAt;
     }
 
-    public static UserResponse from(User user) {
-        return UserResponse.builder()
+    public static MyProfileResponse from (User user) {
+        return MyProfileResponse.builder()
             .id(user.getId())
             .email(user.getEmail())
             .nickname(user.getNickname())
+            .address(user.getAddress())
             .status(user.getStatus())
             .lastLoginAt(user.getLastLoginAt())
             .build();

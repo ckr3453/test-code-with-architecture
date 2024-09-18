@@ -1,10 +1,10 @@
 package com.example.demo.post.service;
 
 import com.example.demo.common.domain.exception.ResourceNotFoundException;
+import com.example.demo.post.domain.Post;
 import com.example.demo.post.domain.PostCreate;
 import com.example.demo.post.domain.PostUpdate;
-import com.example.demo.post.infrastructure.PostEntity;
-import com.example.demo.user.infrastructure.UserEntity;
+import com.example.demo.user.domain.User;
 import com.example.demo.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,17 +42,17 @@ public class PostServiceTest {
     private PostService postService;
 
     @Test
-    void postCreateDto_를_이용하여_post_를_생성할_수_있다() {
+    void postFromDto_를_이용하여_post_를_생성할_수_있다() {
         //given
         String newContent = "hi";
-        UserEntity writer = userService.getById(1);
+        User writer = userService.getById(1);
         PostCreate postCreate = PostCreate.builder()
             .writerId(writer.getId())
             .content(newContent)
             .build();
 
         //when
-        PostEntity result = postService.create(postCreate);
+        Post result = postService.create(postCreate);
 
         //then
         assertThat(result.getId()).isNotNull();
@@ -63,14 +63,14 @@ public class PostServiceTest {
     @Test
     void postUpdateDto_를_이용하여_post_를_수정할_수_있다() {
         //given
-        UserEntity writer = userService.getById(1);
+        User writer = userService.getById(1);
         String updateContent = "hi!!!";
         PostUpdate postUpdate = PostUpdate.builder()
             .content(updateContent)
             .build();
 
         //when
-        PostEntity result = postService.update(writer.getId(), postUpdate);
+        Post result = postService.update(writer.getId(), postUpdate);
 
         //then
         assertThat(result.getContent()).isEqualTo(updateContent);
@@ -81,7 +81,7 @@ public class PostServiceTest {
     void getById_로_존재하는_post_를_찾아올_수_있다() {
         //given
         //when
-        PostEntity result = postService.getById(1);
+        Post result = postService.getById(1);
 
         //then
         assertThat(result.getContent()).isEqualTo("hello, world!");
