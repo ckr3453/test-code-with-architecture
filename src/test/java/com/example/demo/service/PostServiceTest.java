@@ -28,7 +28,6 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 @TestPropertySource("classpath:test-application.properties")
 @SqlGroup({
     // 테스트 메소드 시작전에 호출
-    @Sql(value = "/sql/user-service-test-data.sql", executionPhase = BEFORE_TEST_METHOD),
     @Sql(value = "/sql/post-service-test-data.sql", executionPhase = BEFORE_TEST_METHOD),
     // 테스트 메소드 종료후에 호출
     @Sql(value = "/sql/delete-all-data.sql", executionPhase = AFTER_TEST_METHOD)
