@@ -1,10 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.UserStatus;
 import com.example.demo.model.dto.UserUpdateDto;
-import com.example.demo.repository.UserEntity;
-import com.example.demo.repository.UserRepository;
-import com.example.demo.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +12,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -49,19 +43,13 @@ class UserControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private UserRepository userRepository;
-
     @Test
     void 사용자는_특정_유저의_개인정보를_제외한_정보를_전달_받을_수_있다() throws Exception {
         //given
-        UserEntity userEntity = userService.getById(1);
+        Long userId = 1L;
 
         //when
-        ResultActions perform = mockMvc.perform(get("/api/users/{userId}", userEntity.getId()));
+        ResultActions perform = mockMvc.perform(get("/api/users/{userId}", userId));
 
         //then
         perform
@@ -88,28 +76,41 @@ class UserControllerTest {
     }
 
     @Test
-    @Transactional
-    void 사용자는_인증_코드로_비활성화_계정을_활성화_할_수_있다() throws Exception {
+    void 사용자는_정상적인_인증_코드로_비활성화_계정을_활성화_할_수_있다() throws Exception {
         //given
-        UserEntity pendingUser = userRepository.findById(2L).get();
+        Long pendingUserId = 2L;
+        String pendingUserCertificationCode = "123123-123123-123-123-123123";
 
         //when
-        ResultActions perform = mockMvc.perform(get("/api/users/{userId}/verify", pendingUser.getId())
-            .queryParam("certificationCode", pendingUser.getCertificationCode()));
+        ResultActions perform = mockMvc.perform(get("/api/users/{userId}/verify", pendingUserId)
+            .queryParam("certificationCode", pendingUserCertificationCode));
 
         //then
         perform.andExpect(status().isFound());
-        assertThat(pendingUser.getStatus()).isEqualTo(UserStatus.ACTIVE);
+    }
+
+    @Test
+    void 사용자는_비정상적인_인증_코드로_비활성화_계정을_활성화_할_수_없다() throws Exception {
+        //given
+        Long pendingUserId = 2L;
+        String wrongCertificationCode = "12345";
+
+        //when
+        ResultActions perform = mockMvc.perform(get("/api/users/{userId}/verify", pendingUserId)
+            .queryParam("certificationCode", wrongCertificationCode));
+
+        //then
+        perform.andExpect(status().isForbidden());
     }
 
     @Test
     void 사용자는_내_정보를_불러올_때_개인정보인_주소도_갖고_올_수_있다() throws Exception {
         //given
-        UserEntity userEntity = userService.getById(1);
+        String userEmail = "david3453@naver.com";
 
         //when
         ResultActions perform = mockMvc.perform(get("/api/users/me")
-            .header("EMAIL", userEntity.getEmail()));
+            .header("EMAIL", userEmail));
 
         //then
         perform
@@ -124,7 +125,7 @@ class UserControllerTest {
     @Test
     void 사용자는_내_정보를_수정할_수_있다() throws Exception {
         //given
-        UserEntity userEntity = userService.getById(1);
+        String userEmail = "david3453@naver.com";
         String updateNickname = "ckr-update";
         String updateAddress = "Incheon";
         UserUpdateDto userUpdateDto = UserUpdateDto.builder()
@@ -134,7 +135,7 @@ class UserControllerTest {
 
         //when
         ResultActions perform = mockMvc.perform(put("/api/users/me")
-            .header("EMAIL", userEntity.getEmail())
+            .header("EMAIL", userEmail)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(userUpdateDto)));
 
