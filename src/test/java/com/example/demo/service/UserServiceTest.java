@@ -1,11 +1,12 @@
 package com.example.demo.service;
 
-import com.example.demo.exception.CertificationCodeNotMatchedException;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.UserStatus;
-import com.example.demo.model.dto.UserCreateDto;
-import com.example.demo.model.dto.UserUpdateDto;
-import com.example.demo.repository.UserEntity;
+import com.example.demo.common.domain.exception.CertificationCodeNotMatchedException;
+import com.example.demo.common.domain.exception.ResourceNotFoundException;
+import com.example.demo.user.domain.UserStatus;
+import com.example.demo.user.domain.UserCreate;
+import com.example.demo.user.domain.UserUpdate;
+import com.example.demo.user.infrastructure.UserEntity;
+import com.example.demo.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,7 +92,7 @@ class UserServiceTest {
     @Test
     void userCreateDto_를_이용하여_user_를_생성할_수_있다() {
         //given
-        UserCreateDto userCreateDto = UserCreateDto.builder()
+        UserCreate userCreate = UserCreate.builder()
             .email("david3453@kakao.com")
             .address("Seoul, Gangnam")
             .nickname("ckr3")
@@ -100,7 +101,7 @@ class UserServiceTest {
         BDDMockito.doNothing().when(mailSender).send(any(SimpleMailMessage.class));
 
         //when
-        UserEntity result = userService.create(userCreateDto);
+        UserEntity result = userService.create(userCreate);
 
         //then
         assertThat(result).isNotNull();
@@ -113,13 +114,13 @@ class UserServiceTest {
         //given
         String updateAddress = "Busan";
         String updateNickname = "ckr-busan";
-        UserUpdateDto userUpdateDto = UserUpdateDto.builder()
+        UserUpdate userUpdate = UserUpdate.builder()
             .address(updateAddress)
             .nickname(updateNickname)
             .build();
 
         //when
-        userService.update(1, userUpdateDto);
+        userService.update(1, userUpdate);
 
         //then
         UserEntity result = userService.getById(1);

@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.dto.UserUpdateDto;
+import com.example.demo.user.domain.UserUpdate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,7 +128,7 @@ class UserControllerTest {
         String userEmail = "david3453@naver.com";
         String updateNickname = "ckr-update";
         String updateAddress = "Incheon";
-        UserUpdateDto userUpdateDto = UserUpdateDto.builder()
+        UserUpdate userUpdate = UserUpdate.builder()
             .nickname(updateNickname)
             .address(updateAddress)
             .build();
@@ -137,7 +137,7 @@ class UserControllerTest {
         ResultActions perform = mockMvc.perform(put("/api/users/me")
             .header("EMAIL", userEmail)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(userUpdateDto)));
+            .content(objectMapper.writeValueAsString(userUpdate)));
 
         //then
         perform

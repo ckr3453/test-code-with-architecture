@@ -1,10 +1,12 @@
 package com.example.demo.service;
 
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.dto.PostCreateDto;
-import com.example.demo.model.dto.PostUpdateDto;
-import com.example.demo.repository.PostEntity;
-import com.example.demo.repository.UserEntity;
+import com.example.demo.common.domain.exception.ResourceNotFoundException;
+import com.example.demo.post.domain.PostCreate;
+import com.example.demo.post.domain.PostUpdate;
+import com.example.demo.post.infrastructure.PostEntity;
+import com.example.demo.user.infrastructure.UserEntity;
+import com.example.demo.post.service.PostService;
+import com.example.demo.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -45,13 +47,13 @@ public class PostServiceTest {
         //given
         String newContent = "hi";
         UserEntity writer = userService.getById(1);
-        PostCreateDto postCreateDto = PostCreateDto.builder()
+        PostCreate postCreate = PostCreate.builder()
             .writerId(writer.getId())
             .content(newContent)
             .build();
 
         //when
-        PostEntity result = postService.create(postCreateDto);
+        PostEntity result = postService.create(postCreate);
 
         //then
         assertThat(result.getId()).isNotNull();
@@ -64,12 +66,12 @@ public class PostServiceTest {
         //given
         UserEntity writer = userService.getById(1);
         String updateContent = "hi!!!";
-        PostUpdateDto postUpdateDto = PostUpdateDto.builder()
+        PostUpdate postUpdate = PostUpdate.builder()
             .content(updateContent)
             .build();
 
         //when
-        PostEntity result = postService.update(writer.getId(), postUpdateDto);
+        PostEntity result = postService.update(writer.getId(), postUpdate);
 
         //then
         assertThat(result.getContent()).isEqualTo(updateContent);

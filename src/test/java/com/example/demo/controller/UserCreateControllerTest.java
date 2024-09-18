@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.dto.UserCreateDto;
+import com.example.demo.user.domain.UserCreate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -50,7 +50,7 @@ class UserCreateControllerTest {
         String createEmail = "ckr3453@gmail.com";
         String createNickname = "cckr";
         String createAddress = "Suwon";
-        UserCreateDto userCreateDto = UserCreateDto.builder()
+        UserCreate userCreate = UserCreate.builder()
             .email(createEmail)
             .nickname(createNickname)
             .address(createAddress)
@@ -61,7 +61,7 @@ class UserCreateControllerTest {
         ResultActions perform = mockMvc.perform(post("/api/users")
             .header("EMAIL", "daivd3453@naver.com")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(userCreateDto)));
+            .content(objectMapper.writeValueAsString(userCreate)));
 
         //then
         perform

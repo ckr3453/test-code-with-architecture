@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.dto.PostUpdateDto;
+import com.example.demo.post.domain.PostUpdate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,14 +84,14 @@ class PostControllerTest {
         //given
         Long postId = 1L;
         String updateContent = "hello, test";
-        PostUpdateDto postUpdateDto = PostUpdateDto.builder()
+        PostUpdate postUpdate = PostUpdate.builder()
             .content(updateContent)
             .build();
 
         //when
         ResultActions perform = mockMvc.perform(put("/api/posts/{postId}", postId)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(postUpdateDto)));
+            .content(objectMapper.writeValueAsString(postUpdate)));
 
         //then
         perform
@@ -112,14 +112,14 @@ class PostControllerTest {
         //given
         Long wrongPostId = 12345L;
         String updateContent = "hello, test code";
-        PostUpdateDto postUpdateDto = PostUpdateDto.builder()
+        PostUpdate postUpdate = PostUpdate.builder()
             .content(updateContent)
             .build();
 
         //when
         ResultActions perform = mockMvc.perform(put("/api/posts/{postId}", wrongPostId)
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(postUpdateDto)));
+            .content(objectMapper.writeValueAsString(postUpdate)));
 
         //then
         perform

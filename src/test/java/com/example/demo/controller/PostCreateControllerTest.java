@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.dto.PostCreateDto;
+import com.example.demo.post.domain.PostCreate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ class PostCreateControllerTest {
         //given
         long writerId = 3L;
         String createContent = "hi";
-        PostCreateDto postCreateDto = PostCreateDto.builder()
+        PostCreate postCreate = PostCreate.builder()
             .writerId(writerId)
             .content(createContent)
             .build();
@@ -53,7 +53,7 @@ class PostCreateControllerTest {
         //when
         ResultActions perform = mockMvc.perform(post("/api/posts")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(postCreateDto)));
+            .content(objectMapper.writeValueAsString(postCreate)));
 
         //then
         perform
@@ -73,7 +73,7 @@ class PostCreateControllerTest {
         //given
         long wrongWriterId = 12345L;
         String createContent = "hi!!";
-        PostCreateDto postCreateDto = PostCreateDto.builder()
+        PostCreate postCreate = PostCreate.builder()
             .writerId(wrongWriterId)
             .content(createContent)
             .build();
@@ -81,7 +81,7 @@ class PostCreateControllerTest {
         //when
         ResultActions perform = mockMvc.perform(post("/api/posts")
             .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(postCreateDto)));
+            .content(objectMapper.writeValueAsString(postCreate)));
 
         //then
         perform
