@@ -1,11 +1,10 @@
-package com.example.demo.service;
+package com.example.demo.post.service;
 
 import com.example.demo.common.domain.exception.ResourceNotFoundException;
 import com.example.demo.post.domain.PostCreate;
 import com.example.demo.post.domain.PostUpdate;
 import com.example.demo.post.infrastructure.PostEntity;
 import com.example.demo.user.infrastructure.UserEntity;
-import com.example.demo.post.service.PostService;
 import com.example.demo.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
