@@ -50,42 +50,48 @@ class UserServiceTest {
     @Test
     void getByEmail_은_ACTIVE_상태의_user_를_찾아올_수_있다() {
         //given
-        String email = "david3453@naver.com";
+        String activeUserEmail = "david3453@naver.com";
+        String activeUserNickname = "ckr";
 
         //when
-        User result = userService.getByEmail(email);
+        User result = userService.getByEmail(activeUserEmail);
 
         //then
-        assertThat(result.getNickname()).isEqualTo("ckr");
+        assertThat(result.getNickname()).isEqualTo(activeUserNickname);
     }
 
     @Test
     void getByEmail_은_PENDING_상태의_user_를_찾아올_수_없다() {
         //given
-        String email = "david3454@naver.com";
+        String pendingUserEmail = "david3454@naver.com";
 
         //when
         //then
-        assertThatThrownBy(() -> userService.getByEmail(email)).isInstanceOf(ResourceNotFoundException.class);
+        assertThatThrownBy(() -> userService.getByEmail(pendingUserEmail)).isInstanceOf(ResourceNotFoundException.class);
     }
 
 
     @Test
     void getById_은_ACTIVE_상태의_user_를_찾아올_수_있다() {
         //given
+        long activeUserId = 1L;
+        String activeUserNickname = "ckr";
+
         //when
-        User result = userService.getById(1);
+        User result = userService.getById(activeUserId);
 
         //then
-        assertThat(result.getNickname()).isEqualTo("ckr");
+        assertThat(result.getNickname()).isEqualTo(activeUserNickname);
     }
 
     @Test
     void getById_은_PENDING_상태의_user_를_찾아올_수_없다() {
         //given
+        long pendingUserId = 2L;
+
         //when
         //then
-        assertThatThrownBy(() -> userService.getById(2)).isInstanceOf(ResourceNotFoundException.class);
+        assertThatThrownBy(() -> userService.getById(pendingUserId)).isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test
@@ -111,6 +117,7 @@ class UserServiceTest {
     @Test
     void userUpdateDto_를_이용하여_user_를_수정할_수_있다() {
         //given
+        long activeUserId = 1L;
         String updateAddress = "Busan";
         String updateNickname = "ckr-busan";
         UserUpdate userUpdate = UserUpdate.builder()
@@ -119,10 +126,10 @@ class UserServiceTest {
             .build();
 
         //when
-        userService.update(1, userUpdate);
+        userService.update(activeUserId, userUpdate);
 
         //then
-        User result = userService.getById(1);
+        User result = userService.getById(activeUserId);
         assertThat(result.getId()).isNotNull();
         assertThat(result.getAddress()).isEqualTo(updateAddress);
         assertThat(result.getNickname()).isEqualTo(updateNickname);
@@ -131,31 +138,39 @@ class UserServiceTest {
     @Test
     void user_가_로그인_하면_마지막_로그인_시간이_수정된다() {
         //given
+        long activeUserId = 1L;
+
         //when
-        userService.login(1);
+        userService.login(activeUserId);
 
         //then
-        User result = userService.getById(1);
+        User result = userService.getById(activeUserId);
         assertThat(result.getLastLoginAt()).isPositive();
     }
 
     @Test
     void PENDING_상태의_user_는_인증_코드로_ACTIVE_상태로_변경할_수_있다() {
         //given
+        long pendingUserId = 2L;
+        String pendingUserCertificationCode = "123123-123123-123-123-123123123";
+
         //when
-        userService.verifyEmail(2, "123123-123123-123-123-123123123");
+        userService.verifyEmail(pendingUserId, pendingUserCertificationCode);
 
         //then
-        User result = userService.getById(2);
+        User result = userService.getById(pendingUserId);
         assertThat(result.getStatus()).isEqualTo(UserStatus.ACTIVE);
     }
 
     @Test
     void PENDING_상태의_user_는_잘못된_인증_코드로_ACTIVE_상태로_변경할_수_없다() {
         //given
+        long pendingUserId = 2L;
+        String wrongCeritificationCode = "123123-123123-123-123-123123123-223";
+
         //when
         //then
-        assertThatThrownBy(() -> userService.verifyEmail(2, "123123-123123-123-123-123123123-223"))
+        assertThatThrownBy(() -> userService.verifyEmail(pendingUserId, wrongCeritificationCode))
             .isInstanceOf(CertificationCodeNotMatchedException.class);
     }
 

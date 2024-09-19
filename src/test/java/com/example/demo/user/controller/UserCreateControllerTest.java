@@ -47,6 +47,7 @@ class UserCreateControllerTest {
     @Test
     void 사용자는_회원_가입을_할_수_있고_회원_가입된_사용자는_PENDING_상태이다() throws Exception {
         //given
+        String activeUserEmail = "david3453@naver.com";
         String createEmail = "ckr3453@gmail.com";
         String createNickname = "cckr";
         String createAddress = "Suwon";
@@ -59,7 +60,7 @@ class UserCreateControllerTest {
 
         //when
         ResultActions perform = mockMvc.perform(post("/api/users")
-            .header("EMAIL", "daivd3453@naver.com")
+            .header("EMAIL", activeUserEmail)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(userCreate)));
 
@@ -72,4 +73,5 @@ class UserCreateControllerTest {
             .andExpect(jsonPath("$.address").doesNotExist())
             .andExpect(jsonPath("$.status").value("PENDING"));
     }
+
 }

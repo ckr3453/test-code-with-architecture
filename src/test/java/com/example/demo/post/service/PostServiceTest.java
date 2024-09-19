@@ -44,8 +44,9 @@ public class PostServiceTest {
     @Test
     void postFromDto_를_이용하여_post_를_생성할_수_있다() {
         //given
+        long writerId = 1L;
         String newContent = "hi";
-        User writer = userService.getById(1);
+        User writer = userService.getById(writerId);
         PostCreate postCreate = PostCreate.builder()
             .writerId(writer.getId())
             .content(newContent)
@@ -63,8 +64,9 @@ public class PostServiceTest {
     @Test
     void postUpdateDto_를_이용하여_post_를_수정할_수_있다() {
         //given
-        User writer = userService.getById(1);
+        long writerId = 1L;
         String updateContent = "hi!!!";
+        User writer = userService.getById(writerId);
         PostUpdate postUpdate = PostUpdate.builder()
             .content(updateContent)
             .build();
@@ -80,8 +82,10 @@ public class PostServiceTest {
     @Test
     void getById_로_존재하는_post_를_찾아올_수_있다() {
         //given
+        long postId = 1L;
+
         //when
-        Post result = postService.getById(1);
+        Post result = postService.getById(postId);
 
         //then
         assertThat(result.getContent()).isEqualTo("hello, world!");
@@ -91,9 +95,10 @@ public class PostServiceTest {
     @Test
     void getById_로_존재하지_않는_post_는_찾아올_수_없다() {
         //given
+        long wrongPostId = 12345L;
         //when
         //then
-        assertThatThrownBy(() -> postService.getById(3)).isInstanceOf(ResourceNotFoundException.class);
+        assertThatThrownBy(() -> postService.getById(wrongPostId)).isInstanceOf(ResourceNotFoundException.class);
     }
 
 

@@ -30,8 +30,10 @@ class UserJpaRepositoryTest {
     @Test
     void findByIdAndStatus_로_유저_데이터를_찾아올_수_있다() {
         //given
+        long activeUserId = 1L;
+
         //when
-        Optional<UserEntity> result = userJpaRepository.findByIdAndStatus(1L, UserStatus.ACTIVE);
+        Optional<UserEntity> result = userJpaRepository.findByIdAndStatus(activeUserId, UserStatus.ACTIVE);
 
         //then
         assertThat(result).isPresent();
@@ -40,8 +42,10 @@ class UserJpaRepositoryTest {
     @Test
     void findByIdAndStatus_는_데이터가_없으면_Optional_empty_를_내려준다() {
         //given
+        long activeUserId = 1L;
+
         //when
-        Optional<UserEntity> result = userJpaRepository.findByIdAndStatus(1L, UserStatus.PENDING);
+        Optional<UserEntity> result = userJpaRepository.findByIdAndStatus(activeUserId, UserStatus.PENDING);
 
         //then
         assertThat(result).isNotPresent();
@@ -50,8 +54,10 @@ class UserJpaRepositoryTest {
     @Test
     void findByEmailAndStatus_로_유저_데이터를_찾아올_수_있다() {
         //given
+        String activeUserEmail = "david3453@naver.com";
+
         //when
-        Optional<UserEntity> result = userJpaRepository.findByEmailAndStatus("david3453@naver.com", UserStatus.ACTIVE);
+        Optional<UserEntity> result = userJpaRepository.findByEmailAndStatus(activeUserEmail, UserStatus.ACTIVE);
 
         //then
         assertThat(result).isPresent();
@@ -60,10 +66,13 @@ class UserJpaRepositoryTest {
     @Test
     void findByEmailAndStatus_는_데이터가_없으면_Optional_empty_를_내려준다() {
         //given
+        String wrongEmail = "test@test.com";
+
         //when
-        Optional<UserEntity> result = userJpaRepository.findByEmailAndStatus("david3453@naver.com", UserStatus.PENDING);
+        Optional<UserEntity> result = userJpaRepository.findByEmailAndStatus(wrongEmail, UserStatus.PENDING);
 
         //then
         assertThat(result).isNotPresent();
     }
+
 }

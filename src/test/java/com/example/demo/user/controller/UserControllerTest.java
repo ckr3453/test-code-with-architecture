@@ -43,18 +43,19 @@ class UserControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+
     @Test
     void 사용자는_특정_유저의_개인정보를_제외한_정보를_전달_받을_수_있다() throws Exception {
         //given
-        Long userId = 1L;
+        long activeUserId = 1L;
 
         //when
-        ResultActions perform = mockMvc.perform(get("/api/users/{userId}", userId));
+        ResultActions perform = mockMvc.perform(get("/api/users/{userId}", activeUserId));
 
         //then
         perform
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(1))
+            .andExpect(jsonPath("$.id").value(activeUserId))
             .andExpect(jsonPath("$.email").value("david3453@naver.com"))
             .andExpect(jsonPath("$.nickname").value("ckr"))
             .andExpect(jsonPath("$.address").doesNotExist())
@@ -106,11 +107,11 @@ class UserControllerTest {
     @Test
     void 사용자는_내_정보를_불러올_때_개인정보인_주소도_갖고_올_수_있다() throws Exception {
         //given
-        String userEmail = "david3453@naver.com";
+        String activeUserEmail = "david3453@naver.com";
 
         //when
         ResultActions perform = mockMvc.perform(get("/api/users/me")
-            .header("EMAIL", userEmail));
+            .header("EMAIL", activeUserEmail));
 
         //then
         perform
@@ -125,7 +126,7 @@ class UserControllerTest {
     @Test
     void 사용자는_내_정보를_수정할_수_있다() throws Exception {
         //given
-        String userEmail = "david3453@naver.com";
+        String activeUserEmail = "david3453@naver.com";
         String updateNickname = "ckr-update";
         String updateAddress = "Incheon";
         UserUpdate userUpdate = UserUpdate.builder()
@@ -135,7 +136,7 @@ class UserControllerTest {
 
         //when
         ResultActions perform = mockMvc.perform(put("/api/users/me")
-            .header("EMAIL", userEmail)
+            .header("EMAIL", activeUserEmail)
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(userUpdate)));
 
@@ -143,9 +144,10 @@ class UserControllerTest {
         perform
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(1))
-            .andExpect(jsonPath("$.email").value("david3453@naver.com"))
+            .andExpect(jsonPath("$.email").value(activeUserEmail))
             .andExpect(jsonPath("$.nickname").value(updateNickname))
             .andExpect(jsonPath("$.address").value(updateAddress))
             .andExpect(jsonPath("$.status").value("ACTIVE"));
     }
+
 }
