@@ -29,7 +29,7 @@ public class PostResponse {
             .content(post.getContent())
             .createdAt(post.getCreatedAt())
             .modifiedAt(post.getModifiedAt())
-            .writer(UserResponse.from(post.getWriter().toModel()))
+            .writer(UserResponse.from(post.getWriter()))
             .build();
     }
 }
