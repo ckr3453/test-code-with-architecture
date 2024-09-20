@@ -1,6 +1,8 @@
 package com.example.demo.user.service;
 
 import com.example.demo.common.domain.exception.ResourceNotFoundException;
+import com.example.demo.common.infrastructure.SystemClockHolder;
+import com.example.demo.common.infrastructure.SystemUuidHolder;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserCreate;
 import com.example.demo.user.domain.UserStatus;
@@ -15,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final SystemUuidHolder systemUuidHolder;
+    private final SystemClockHolder systemClockHolder;
     private final CertificationService certificationService;
 
     public User getByEmail(String email) {
@@ -29,7 +33,7 @@ public class UserService {
 
     @Transactional
     public User create(UserCreate userCreate) {
-        User user = User.from(userCreate);
+        User user = User.from(userCreate, systemUuidHolder);
         user = userRepository.save(user);
         certificationService.send(userCreate.getEmail(), user.getId(), user.getCertificationCode());
         return user;
@@ -44,7 +48,7 @@ public class UserService {
 
     public void login(long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Users", id));
-        user = user.login();
+        user = user.login(systemClockHolder);
         userRepository.save(user);
     }
 
