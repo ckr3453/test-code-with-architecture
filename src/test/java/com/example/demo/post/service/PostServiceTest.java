@@ -65,17 +65,17 @@ public class PostServiceTest {
     void postUpdateDto_를_이용하여_post_를_수정할_수_있다() {
         //given
         long writerId = 1L;
-        String updateContent = "hi!!!";
+        String newContent = "hi!!!";
         User writer = userService.getById(writerId);
         PostUpdate postUpdate = PostUpdate.builder()
-            .content(updateContent)
+            .content(newContent)
             .build();
 
         //when
         Post result = postService.update(writer.getId(), postUpdate);
 
         //then
-        assertThat(result.getContent()).isEqualTo(updateContent);
+        assertThat(result.getContent()).isEqualTo(newContent);
         assertThat(result.getModifiedAt()).isPositive();
     }
 

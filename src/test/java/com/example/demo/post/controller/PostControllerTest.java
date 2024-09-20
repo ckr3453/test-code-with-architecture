@@ -83,9 +83,9 @@ class PostControllerTest {
     void 사용자는_존재하는_게시글을_수정할_수_있다() throws Exception {
         //given
         Long postId = 1L;
-        String updateContent = "hello, test";
+        String newContent = "hello, test";
         PostUpdate postUpdate = PostUpdate.builder()
-            .content(updateContent)
+            .content(newContent)
             .build();
 
         //when
@@ -96,8 +96,8 @@ class PostControllerTest {
         //then
         perform
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(1))
-            .andExpect(jsonPath("$.content").value("hello, test"))
+            .andExpect(jsonPath("$.id").value(postId))
+            .andExpect(jsonPath("$.content").value(newContent))
             .andExpect(jsonPath("$.createdAt").value(1678530673958L))
             .andExpect(jsonPath("$.modifiedAt").isNumber())
             .andExpect(jsonPath("$.writer.id").value(1))
@@ -111,9 +111,9 @@ class PostControllerTest {
     void 사용자는_존재하지_않는_게시글을_수정할_수_없다() throws Exception {
         //given
         Long wrongPostId = 12345L;
-        String updateContent = "hello, test code";
+        String newContent = "hello, test code";
         PostUpdate postUpdate = PostUpdate.builder()
-            .content(updateContent)
+            .content(newContent)
             .build();
 
         //when

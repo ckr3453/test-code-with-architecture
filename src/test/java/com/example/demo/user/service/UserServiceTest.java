@@ -118,11 +118,11 @@ class UserServiceTest {
     void userUpdateDto_를_이용하여_user_를_수정할_수_있다() {
         //given
         long activeUserId = 1L;
-        String updateAddress = "Busan";
-        String updateNickname = "ckr-busan";
+        String newAddress = "Busan";
+        String newNickname = "ckr-busan";
         UserUpdate userUpdate = UserUpdate.builder()
-            .address(updateAddress)
-            .nickname(updateNickname)
+            .address(newAddress)
+            .nickname(newNickname)
             .build();
 
         //when
@@ -131,8 +131,8 @@ class UserServiceTest {
         //then
         User result = userService.getById(activeUserId);
         assertThat(result.getId()).isNotNull();
-        assertThat(result.getAddress()).isEqualTo(updateAddress);
-        assertThat(result.getNickname()).isEqualTo(updateNickname);
+        assertThat(result.getAddress()).isEqualTo(newAddress);
+        assertThat(result.getNickname()).isEqualTo(newNickname);
     }
 
     @Test

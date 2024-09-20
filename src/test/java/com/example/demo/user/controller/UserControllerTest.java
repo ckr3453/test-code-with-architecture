@@ -127,11 +127,11 @@ class UserControllerTest {
     void 사용자는_내_정보를_수정할_수_있다() throws Exception {
         //given
         String activeUserEmail = "david3453@naver.com";
-        String updateNickname = "ckr-update";
-        String updateAddress = "Incheon";
+        String newNickname = "ckr-update";
+        String newAddress = "Incheon";
         UserUpdate userUpdate = UserUpdate.builder()
-            .nickname(updateNickname)
-            .address(updateAddress)
+            .nickname(newNickname)
+            .address(newAddress)
             .build();
 
         //when
@@ -145,8 +145,8 @@ class UserControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(1))
             .andExpect(jsonPath("$.email").value(activeUserEmail))
-            .andExpect(jsonPath("$.nickname").value(updateNickname))
-            .andExpect(jsonPath("$.address").value(updateAddress))
+            .andExpect(jsonPath("$.nickname").value(newNickname))
+            .andExpect(jsonPath("$.address").value(newAddress))
             .andExpect(jsonPath("$.status").value("ACTIVE"));
     }
 
