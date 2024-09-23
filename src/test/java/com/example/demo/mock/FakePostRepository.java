@@ -21,7 +21,9 @@ public class FakePostRepository implements PostRepository {
 
     @Override
     public Optional<Post> findById(long id) {
-        return storedPosts.stream().filter(storedPost -> storedPost.getId().equals(id)).findAny();
+        return storedPosts.stream()
+            .filter(storedPost -> storedPost.getId().equals(id))
+            .findAny();
     }
 
     @Override
