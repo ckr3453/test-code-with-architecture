@@ -71,10 +71,8 @@ class PostCreateControllerTest {
     @Test
     void 작성자가_존재하지_않으면_게시글을_생성할_수_없다() throws Exception {
         //given
-        long wrongWriterId = 12345L;
         String createContent = "hi!!";
         PostCreate postCreate = PostCreate.builder()
-            .writerId(wrongWriterId)
             .content(createContent)
             .build();
 
@@ -86,7 +84,7 @@ class PostCreateControllerTest {
         //then
         perform
             .andExpect(status().isNotFound())
-            .andExpect(content().string("Users에서 ID 12345를 찾을 수 없습니다."));
+            .andExpect(content().string("User에서 ID 0를 찾을 수 없습니다."));
     }
 
 }
