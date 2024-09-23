@@ -1,5 +1,6 @@
 package com.example.demo.mock;
 
+import com.example.demo.common.domain.exception.ResourceNotFoundException;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserStatus;
 import com.example.demo.user.service.port.UserRepository;
@@ -21,15 +22,25 @@ public class FakeUserRepository implements UserRepository {
     private final List<User> storedUsers = new ArrayList<>();
 
     @Override
+    public User getById(Long id) {
+        return storedUsers.stream()
+            .filter(u -> u.getId().equals(id))
+            .findAny()
+            .orElseThrow(() -> new ResourceNotFoundException("Users", id));
+    }
+
+    @Override
     public Optional<User> findByIdAndStatus(long id, UserStatus userStatus) {
-        return storedUsers.stream().filter(storedUser -> storedUser.getId().equals(id)
-            && storedUser.getStatus().equals(userStatus)).findAny();
+        return storedUsers.stream()
+            .filter(storedUser -> storedUser.getId().equals(id) && storedUser.getStatus().equals(userStatus))
+            .findAny();
     }
 
     @Override
     public Optional<User> findByEmailAndStatus(String email, UserStatus userStatus) {
-        return storedUsers.stream().filter(storedUser -> storedUser.getEmail().equals(email)
-            && storedUser.getStatus().equals(userStatus)).findAny();
+        return storedUsers.stream()
+            .filter(storedUser -> storedUser.getEmail().equals(email) && storedUser.getStatus().equals(userStatus))
+            .findAny();
     }
 
     @Override
@@ -56,6 +67,8 @@ public class FakeUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findById(long id) {
-        return storedUsers.stream().filter(storedUser -> storedUser.getId().equals(id)).findAny();
+        return storedUsers.stream()
+            .filter(storedUser -> storedUser.getId().equals(id))
+            .findAny();
     }
 }
