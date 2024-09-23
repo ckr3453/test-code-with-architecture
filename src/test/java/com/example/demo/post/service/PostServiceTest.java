@@ -1,22 +1,19 @@
 package com.example.demo.post.service;
 
 import com.example.demo.common.domain.exception.ResourceNotFoundException;
+import com.example.demo.mock.FakePostRepository;
+import com.example.demo.mock.FakeUserRepository;
+import com.example.demo.mock.TestClockHolder;
 import com.example.demo.post.domain.Post;
 import com.example.demo.post.domain.PostCreate;
 import com.example.demo.post.domain.PostUpdate;
 import com.example.demo.user.domain.User;
-import com.example.demo.user.service.UserService;
+import com.example.demo.user.domain.UserStatus;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlGroup;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 /**
  * packageName : com.example.demo.service
@@ -25,30 +22,66 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
  * date        : 24. 9. 18.
  * description :
  */
-@SpringBootTest
-@TestPropertySource("classpath:test-application.properties")
-@SqlGroup({
-    // 테스트 메소드 시작전에 호출
-    @Sql(value = "/sql/post-service-test-data.sql", executionPhase = BEFORE_TEST_METHOD),
-    // 테스트 메소드 종료후에 호출
-    @Sql(value = "/sql/delete-all-data.sql", executionPhase = AFTER_TEST_METHOD)
-})
+
 public class PostServiceTest {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
     private PostService postService;
+
+    @BeforeEach
+    void setUp() {
+        FakePostRepository fakePostRepository = new FakePostRepository();
+        FakeUserRepository fakeUserRepository = new FakeUserRepository();
+
+        this.postService = PostService.builder()
+            .postRepository(fakePostRepository)
+            .userRepository(fakeUserRepository)
+            .clockHolder(new TestClockHolder(123456789L))
+            .build();
+
+        User writer = User.builder()
+            .id(1L)
+            .email("david3453@naver.com")
+            .nickname("ckr")
+            .address("Seoul, Gunja")
+            .certificationCode("123123-123123-123-123-123123123")
+            .status(UserStatus.ACTIVE)
+            .lastLoginAt(0L)
+            .build();
+
+        fakeUserRepository.save(writer);
+        fakePostRepository.save(Post.builder()
+            .id(1L)
+            .content("hello, world!")
+            .createdAt(1678530673958L)
+            .modifiedAt(1678530673958L)
+            .writer(writer)
+            .build());
+        fakePostRepository.save(Post.builder()
+            .id(2L)
+            .content("hello, test world?!!")
+            .createdAt(1678530673999L)
+            .modifiedAt(1678530673999L)
+            .writer(writer)
+            .build());
+
+        fakeUserRepository.save(User.builder()
+            .id(2L)
+            .email("david3454@naver.com")
+            .nickname("ckr2")
+            .address("Incheon")
+            .certificationCode("123123-123123-123-123-123123123")
+            .status(UserStatus.PENDING)
+            .lastLoginAt(0L)
+            .build());
+    }
 
     @Test
     void postFromDto_를_이용하여_post_를_생성할_수_있다() {
         //given
         long writerId = 1L;
         String newContent = "hi";
-        User writer = userService.getById(writerId);
         PostCreate postCreate = PostCreate.builder()
-            .writerId(writer.getId())
+            .writerId(writerId)
             .content(newContent)
             .build();
 
@@ -66,13 +99,12 @@ public class PostServiceTest {
         //given
         long writerId = 1L;
         String newContent = "hi!!!";
-        User writer = userService.getById(writerId);
         PostUpdate postUpdate = PostUpdate.builder()
             .content(newContent)
             .build();
 
         //when
-        Post result = postService.update(writer.getId(), postUpdate);
+        Post result = postService.update(writerId, postUpdate);
 
         //then
         assertThat(result.getContent()).isEqualTo(newContent);
