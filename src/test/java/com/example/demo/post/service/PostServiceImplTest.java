@@ -23,16 +23,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * description :
  */
 
-public class PostServiceTest {
+public class PostServiceImplTest {
 
-    private PostService postService;
+    private PostServiceImpl postServiceImpl;
 
     @BeforeEach
     void setUp() {
         FakePostRepository fakePostRepository = new FakePostRepository();
         FakeUserRepository fakeUserRepository = new FakeUserRepository();
 
-        this.postService = PostService.builder()
+        this.postServiceImpl = PostServiceImpl.builder()
             .postRepository(fakePostRepository)
             .userRepository(fakeUserRepository)
             .clockHolder(new TestClockHolder(123456789L))
@@ -86,7 +86,7 @@ public class PostServiceTest {
             .build();
 
         //when
-        Post result = postService.create(postCreate);
+        Post result = postServiceImpl.create(postCreate);
 
         //then
         assertThat(result.getId()).isNotNull();
@@ -104,7 +104,7 @@ public class PostServiceTest {
             .build();
 
         //when
-        Post result = postService.update(writerId, postUpdate);
+        Post result = postServiceImpl.update(writerId, postUpdate);
 
         //then
         assertThat(result.getContent()).isEqualTo(newContent);
@@ -117,7 +117,7 @@ public class PostServiceTest {
         long postId = 1L;
 
         //when
-        Post result = postService.getById(postId);
+        Post result = postServiceImpl.getById(postId);
 
         //then
         assertThat(result.getContent()).isEqualTo("hello, world!");
@@ -130,7 +130,7 @@ public class PostServiceTest {
         long wrongPostId = 12345L;
         //when
         //then
-        assertThatThrownBy(() -> postService.getById(wrongPostId)).isInstanceOf(ResourceNotFoundException.class);
+        assertThatThrownBy(() -> postServiceImpl.getById(wrongPostId)).isInstanceOf(ResourceNotFoundException.class);
     }
 
 

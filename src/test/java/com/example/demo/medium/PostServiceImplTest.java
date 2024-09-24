@@ -4,9 +4,9 @@ import com.example.demo.common.domain.exception.ResourceNotFoundException;
 import com.example.demo.post.domain.Post;
 import com.example.demo.post.domain.PostCreate;
 import com.example.demo.post.domain.PostUpdate;
-import com.example.demo.post.service.PostService;
+import com.example.demo.post.service.PostServiceImpl;
 import com.example.demo.user.domain.User;
-import com.example.demo.user.service.UserService;
+import com.example.demo.user.service.UserServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,27 +34,27 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
     // 테스트 메소드 종료후에 호출
     @Sql(value = "/sql/delete-all-data.sql", executionPhase = AFTER_TEST_METHOD)
 })
-public class PostServiceTest {
+public class PostServiceImplTest {
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
     @Autowired
-    private PostService postService;
+    private PostServiceImpl postServiceImpl;
 
     @Test
     void postFromDto_를_이용하여_post_를_생성할_수_있다() {
         //given
         long writerId = 1L;
         String newContent = "hi";
-        User writer = userService.getById(writerId);
+        User writer = userServiceImpl.getById(writerId);
         PostCreate postCreate = PostCreate.builder()
             .writerId(writer.getId())
             .content(newContent)
             .build();
 
         //when
-        Post result = postService.create(postCreate);
+        Post result = postServiceImpl.create(postCreate);
 
         //then
         assertThat(result.getId()).isNotNull();
@@ -67,13 +67,13 @@ public class PostServiceTest {
         //given
         long writerId = 1L;
         String newContent = "hi!!!";
-        User writer = userService.getById(writerId);
+        User writer = userServiceImpl.getById(writerId);
         PostUpdate postUpdate = PostUpdate.builder()
             .content(newContent)
             .build();
 
         //when
-        Post result = postService.update(writer.getId(), postUpdate);
+        Post result = postServiceImpl.update(writer.getId(), postUpdate);
 
         //then
         assertThat(result.getContent()).isEqualTo(newContent);
@@ -86,7 +86,7 @@ public class PostServiceTest {
         long postId = 1L;
 
         //when
-        Post result = postService.getById(postId);
+        Post result = postServiceImpl.getById(postId);
 
         //then
         assertThat(result.getContent()).isEqualTo("hello, world!");
@@ -99,7 +99,7 @@ public class PostServiceTest {
         long wrongPostId = 12345L;
         //when
         //then
-        assertThatThrownBy(() -> postService.getById(wrongPostId)).isInstanceOf(ResourceNotFoundException.class);
+        assertThatThrownBy(() -> postServiceImpl.getById(wrongPostId)).isInstanceOf(ResourceNotFoundException.class);
     }
 
 

@@ -24,9 +24,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * description :
  */
 
-class UserServiceTest {
+class UserServiceImplTest {
 
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
     private long testLastLoginAt;
     private String testCertificationCode;
 
@@ -37,7 +37,7 @@ class UserServiceTest {
 
         FakeUserRepository fakeUserRepository = new FakeUserRepository();
 
-        this.userService = UserService.builder()
+        this.userServiceImpl = UserServiceImpl.builder()
             .certificationService(new CertificationService(new FakeMailSender()))
             .clockHolder(new TestClockHolder(this.testLastLoginAt))
             .uuidHolder(new TestUuidHolder(this.testCertificationCode))
@@ -72,7 +72,7 @@ class UserServiceTest {
         String activeUserNickname = "ckr";
 
         //when
-        User result = userService.getByEmail(activeUserEmail);
+        User result = userServiceImpl.getByEmail(activeUserEmail);
 
         //then
         assertThat(result.getNickname()).isEqualTo(activeUserNickname);
@@ -85,7 +85,7 @@ class UserServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> userService.getByEmail(pendingUserEmail)).isInstanceOf(ResourceNotFoundException.class);
+        assertThatThrownBy(() -> userServiceImpl.getByEmail(pendingUserEmail)).isInstanceOf(ResourceNotFoundException.class);
     }
 
 
@@ -96,7 +96,7 @@ class UserServiceTest {
         String activeUserNickname = "ckr";
 
         //when
-        User result = userService.getById(activeUserId);
+        User result = userServiceImpl.getById(activeUserId);
 
         //then
         assertThat(result.getNickname()).isEqualTo(activeUserNickname);
@@ -109,7 +109,7 @@ class UserServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> userService.getById(pendingUserId)).isInstanceOf(ResourceNotFoundException.class);
+        assertThatThrownBy(() -> userServiceImpl.getById(pendingUserId)).isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test
@@ -123,7 +123,7 @@ class UserServiceTest {
         // (실제 인증과정 중 메일 보내는 행위를 mock을 통해 대체(아무것도 하지않음))
 
         //when
-        User result = userService.create(userCreate);
+        User result = userServiceImpl.create(userCreate);
 
         //then
         assertThat(result).isNotNull();
@@ -143,10 +143,10 @@ class UserServiceTest {
             .build();
 
         //when
-        userService.update(activeUserId, userUpdate);
+        userServiceImpl.update(activeUserId, userUpdate);
 
         //then
-        User result = userService.getById(activeUserId);
+        User result = userServiceImpl.getById(activeUserId);
         assertThat(result.getId()).isNotNull();
         assertThat(result.getAddress()).isEqualTo(newAddress);
         assertThat(result.getNickname()).isEqualTo(newNickname);
@@ -158,10 +158,10 @@ class UserServiceTest {
         long activeUserId = 1L;
 
         //when
-        userService.login(activeUserId);
+        userServiceImpl.login(activeUserId);
 
         //then
-        User result = userService.getById(activeUserId);
+        User result = userServiceImpl.getById(activeUserId);
         assertThat(result.getLastLoginAt()).isEqualTo(testLastLoginAt);
     }
 
@@ -172,10 +172,10 @@ class UserServiceTest {
         String pendingUserCertificationCode = "123123-123123-123-123-123123123";
 
         //when
-        userService.verifyEmail(pendingUserId, pendingUserCertificationCode);
+        userServiceImpl.verifyEmail(pendingUserId, pendingUserCertificationCode);
 
         //then
-        User result = userService.getById(pendingUserId);
+        User result = userServiceImpl.getById(pendingUserId);
         assertThat(result.getStatus()).isEqualTo(UserStatus.ACTIVE);
     }
 
@@ -187,7 +187,7 @@ class UserServiceTest {
 
         //when
         //then
-        assertThatThrownBy(() -> userService.verifyEmail(pendingUserId, wrongCeritificationCode))
+        assertThatThrownBy(() -> userServiceImpl.verifyEmail(pendingUserId, wrongCeritificationCode))
             .isInstanceOf(CertificationCodeNotMatchedException.class);
     }
 
