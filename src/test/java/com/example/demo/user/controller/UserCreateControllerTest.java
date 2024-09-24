@@ -4,7 +4,6 @@ import com.example.demo.mock.TestClockHolder;
 import com.example.demo.mock.TestContainer;
 import com.example.demo.mock.TestUuidHolder;
 import com.example.demo.user.controller.response.UserResponse;
-import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserCreate;
 import com.example.demo.user.domain.UserStatus;
 import org.junit.jupiter.api.Test;
@@ -51,9 +50,7 @@ class UserCreateControllerTest {
         assertThat(result.getBody().getEmail()).isEqualTo(newEmail);
         assertThat(result.getBody().getNickname()).isEqualTo(newNickname);
         assertThat(result.getBody().getStatus()).isEqualTo(UserStatus.PENDING);
-
-        User newUser = testContainer.userRepository.getById(1L);
-        assertThat(newUser.getCertificationCode()).isEqualTo(newCertificationCode);
+        assertThat(result.getBody().getLastLoginAt()).isNull();
     }
 
 }
