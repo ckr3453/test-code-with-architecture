@@ -9,10 +9,6 @@ import com.example.demo.post.service.PostServiceImpl;
 import com.example.demo.post.service.port.PostRepository;
 import com.example.demo.user.controller.UserController;
 import com.example.demo.user.controller.UserCreateController;
-import com.example.demo.user.controller.port.AuthenticationService;
-import com.example.demo.user.controller.port.UserCreateService;
-import com.example.demo.user.controller.port.UserReadService;
-import com.example.demo.user.controller.port.UserUpdateService;
 import com.example.demo.user.service.CertificationService;
 import com.example.demo.user.service.UserServiceImpl;
 import com.example.demo.user.service.port.MailSender;
@@ -32,10 +28,6 @@ public class TestContainer {
     public final PostService postService;
     public final UserRepository userRepository;
     public final PostRepository postRepository;
-    public final UserReadService userReadService;
-    public final UserCreateService userCreateService;
-    public final UserUpdateService userUpdateService;
-    public final AuthenticationService authenticationService;
     public final CertificationService certificationService;
     public final UserController userController;
     public final UserCreateController userCreateController;
@@ -59,19 +51,11 @@ public class TestContainer {
             .userRepository(this.userRepository)
             .certificationService(this.certificationService)
             .build();
-
-        this.userReadService = userServiceImpl;
-        this.userCreateService = userServiceImpl;
-        this.userUpdateService = userServiceImpl;
-        this.authenticationService = userServiceImpl;
         this.userController = UserController.builder()
-            .userReadService(this.userReadService)
-            .userCreateService(this.userCreateService)
-            .authenticationService(this.authenticationService)
-            .userUpdateService(this.userUpdateService)
+            .userService(userServiceImpl)
             .build();
         this.userCreateController = UserCreateController.builder()
-            .userCreateService(this.userCreateService)
+            .userService(userServiceImpl)
             .build();
         this.postController = PostController.builder()
             .postService(this.postService)

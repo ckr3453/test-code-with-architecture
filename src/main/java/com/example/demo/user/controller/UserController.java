@@ -23,24 +23,21 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserReadService userReadService;
-    private final UserUpdateService userUpdateService;
-    private final UserCreateService userCreateService;
-    private final AuthenticationService authenticationService;
+    private final UserService userService;
 
     @ResponseStatus
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable long id) {
         return ResponseEntity
             .ok()
-            .body(UserResponse.from(userReadService.getById(id)));
+            .body(UserResponse.from(userService.getById(id)));
     }
 
     @GetMapping("/{id}/verify")
     public ResponseEntity<Void> verifyEmail(
         @PathVariable long id,
         @RequestParam String certificationCode) {
-        authenticationService.verifyEmail(id, certificationCode);
+        userService.verifyEmail(id, certificationCode);
         return ResponseEntity
             .status(HttpStatus.FOUND)
             .location(URI.create("http://localhost:3000"))
@@ -52,9 +49,9 @@ public class UserController {
         @Parameter(name = "EMAIL", in = ParameterIn.HEADER)
         @RequestHeader("EMAIL") String email
     ) {
-        User user = userReadService.getByEmail(email);
-        authenticationService.login(user.getId());
-        user = userReadService.getByEmail(email);
+        User user = userService.getByEmail(email);
+        userService.login(user.getId());
+        user = userService.getByEmail(email);
         return ResponseEntity
             .ok()
             .body(MyProfileResponse.from(user));
@@ -67,8 +64,8 @@ public class UserController {
         @RequestHeader("EMAIL") String email,
         @RequestBody UserUpdate userUpdate
     ) {
-        User user = userReadService.getByEmail(email);
-        user = userUpdateService.update(user.getId(), userUpdate);
+        User user = userService.getByEmail(email);
+        user = userService.update(user.getId(), userUpdate);
         return ResponseEntity
             .ok()
             .body(MyProfileResponse.from(user));
