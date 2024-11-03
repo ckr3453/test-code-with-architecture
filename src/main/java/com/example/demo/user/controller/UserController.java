@@ -1,12 +1,7 @@
 package com.example.demo.user.controller;
 
-import com.example.demo.user.controller.port.*;
-import com.example.demo.user.controller.response.MyProfileResponse;
+import com.example.demo.user.controller.port.UserService;
 import com.example.demo.user.controller.response.UserResponse;
-import com.example.demo.user.domain.User;
-import com.example.demo.user.domain.UserUpdate;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
@@ -42,32 +37,5 @@ public class UserController {
             .status(HttpStatus.FOUND)
             .location(URI.create("http://localhost:3000"))
             .build();
-    }
-
-    @GetMapping("/me")
-    public ResponseEntity<MyProfileResponse> getMyInfo(
-        @Parameter(name = "EMAIL", in = ParameterIn.HEADER)
-        @RequestHeader("EMAIL") String email
-    ) {
-        User user = userService.getByEmail(email);
-        userService.login(user.getId());
-        user = userService.getByEmail(email);
-        return ResponseEntity
-            .ok()
-            .body(MyProfileResponse.from(user));
-    }
-
-    @PutMapping("/me")
-    @Parameter(in = ParameterIn.HEADER, name = "EMAIL")
-    public ResponseEntity<MyProfileResponse> updateMyInfo(
-        @Parameter(name = "EMAIL", in = ParameterIn.HEADER)
-        @RequestHeader("EMAIL") String email,
-        @RequestBody UserUpdate userUpdate
-    ) {
-        User user = userService.getByEmail(email);
-        user = userService.update(user.getId(), userUpdate);
-        return ResponseEntity
-            .ok()
-            .body(MyProfileResponse.from(user));
     }
 }
